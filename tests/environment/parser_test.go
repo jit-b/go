@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	env "github.com/jit-brains/go/environment"
+	env "github.com/jit-b/go/environment"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jit-brains/go/value"
+	"github.com/jit-b/go/value"
 )
 
 func Get(keyTemplate string, templateValues ...any) *value.Converter {

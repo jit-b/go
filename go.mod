@@ -1,4 +1,4 @@
-module github.com/jit-brains/go
+module github.com/jit-b/go
 
 go 1.20
 

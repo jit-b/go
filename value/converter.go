@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jit-brains/go/errors"
+	"github.com/jit-b/go/errors"
 )
 
 const (

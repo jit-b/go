@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jit-brains/go/multiplier"
+	"github.com/jit-b/go/multiplier"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/goleak"
 )
