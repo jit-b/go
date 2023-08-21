@@ -8,6 +8,75 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_Parser_Get_AsRFC3339Time(test *testing.T) {
+	test.Run(
+		"Success getting value from env as RFC3339 time format",
+		func(test *testing.T) {
+			testTime, err := time.Parse(time.RFC3339, "2023-08-21T21:04:05+03:00")
+			assert.NoError(test, err)
+
+			test.Setenv("TEST_KEY", testTime.Format(time.RFC3339))
+
+			result, err := env.Get("TEST_KEY").AsRFC3339Time()
+			assert.NoError(test, err)
+			assert.Equal(test, testTime, result)
+		},
+	)
+
+	test.Run(
+		"Success getting value with templating from env as duration",
+		func(test *testing.T) {
+			firstTestTime, err := time.Parse(time.RFC3339, "2023-08-21T21:04:05+03:00")
+			assert.NoError(test, err)
+			secondTestTime, err := time.Parse(time.RFC3339, "2023-08-09T12:30:00+03:00")
+			assert.NoError(test, err)
+
+			test.Setenv("FIRST_TEST_KEY", "2023-08-21T21:04:05+03:00")
+			test.Setenv("SECOND_TEST_KEY", "1988-13-11T13:30:00+10:00")
+
+			test.Setenv("FIRST_TEST_KEY", firstTestTime.Format(time.RFC3339))
+			test.Setenv("SECOND_TEST_KEY", secondTestTime.Format(time.RFC3339))
+
+			result, err := env.Get("%s_TEST_KEY", "FIRST").AsRFC3339Time()
+			assert.NoError(test, err)
+			assert.Equal(test, firstTestTime, result)
+
+			result, err = env.Get("%s_TEST_KEY", "SECOND").AsRFC3339Time()
+			assert.NoError(test, err)
+			assert.Equal(test, secondTestTime, result)
+		},
+	)
+
+	test.Run(
+		"Error when value is invalid",
+		func(test *testing.T) {
+			test.Setenv("TEST_KEY", "2")
+
+			_, err := env.Get("TEST_KEY").AsRFC3339Time()
+			assert.Error(test, err)
+		},
+	)
+
+	test.Run(
+		"Error when env variable is empty",
+		func(test *testing.T) {
+			test.Setenv("TEST_KEY", "")
+
+			_, err := env.Get("TEST_KEY").AsRFC3339Time()
+			assert.Error(test, err)
+		},
+	)
+
+	test.Run(
+		"Error when env variable not exist",
+		func(test *testing.T) {
+
+			_, err := env.Get("TEST_KEY").AsDuration()
+			assert.Error(test, err)
+		},
+	)
+}
+
 func Test_Parser_Get_AsDuration(test *testing.T) {
 	test.Run(
 		"Success getting value from env as duration",
@@ -257,6 +326,26 @@ func Test_Parser_Get_AsBoolWithDefault(test *testing.T) {
 
 			result := env.Get("TEST_KEY").AsBoolWithDefault(false)
 			assert.Equal(test, true, result)
+		},
+	)
+
+	test.Run(
+		"Success getting 1 as true from env",
+		func(test *testing.T) {
+			test.Setenv("TEST_KEY", "1")
+
+			result := env.Get("TEST_KEY").AsBoolWithDefault(false)
+			assert.Equal(test, true, result)
+		},
+	)
+
+	test.Run(
+		"Success getting 0 as false from env",
+		func(test *testing.T) {
+			test.Setenv("TEST_KEY", "0")
+
+			result := env.Get("TEST_KEY").AsBoolWithDefault(true)
+			assert.Equal(test, false, result)
 		},
 	)
 

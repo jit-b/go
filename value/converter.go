@@ -11,6 +11,7 @@ import (
 const (
 	errConvertIntegerTemplate      = "Can't convert value '%s' to integer"
 	errConvertTimeDurationTemplate = "Can't convert value '%s' as time duration"
+	errConvertTimeRFC3339Template  = "Can't convert value '%s' as time RFC3339 format. Expecting format: " + time.RFC3339
 	errConvertStringSliceTemplate  = "Can't convert value '%s' with separator '%s' to slice of strings"
 	errConvertStringMapTemplate    = "Can't convert value '%s' with separator '%s' and pair separator '%s' as map of strings"
 )
@@ -28,6 +29,16 @@ func NewConverter(v string) *Converter {
 	result := Converter(v)
 
 	return &result
+}
+
+func (c *Converter) AsRFC3339Time() (time.Time, error) {
+	value := c.AsString()
+	result, err := time.Parse(time.RFC3339, value)
+	if err != nil {
+		return time.Time{}, errors.New(errConvertTimeRFC3339Template, value).Cause(err)
+	}
+
+	return result, nil
 }
 
 func (c *Converter) AsDuration() (time.Duration, error) {
