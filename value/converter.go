@@ -17,6 +17,13 @@ const (
 
 type Converter string
 
+var boolMap = map[string]bool{
+	"true":  true,
+	"1":     true,
+	"false": false,
+	"0":     false,
+}
+
 func NewConverter(v string) *Converter {
 	result := Converter(v)
 
@@ -84,14 +91,12 @@ func (c *Converter) AsInteger() (int64, error) {
 }
 
 func (c *Converter) AsBoolWithDefault(defaultValue bool) bool {
-	switch strings.ToLower(c.AsString()) {
-	case "true":
-		return true
-	case "false":
-		return false
-	default:
+	value, isExist := boolMap[c.AsString()]
+	if !isExist {
 		return defaultValue
 	}
+
+	return value
 }
 
 func (c *Converter) AsString() string {
